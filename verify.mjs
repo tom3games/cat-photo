@@ -273,6 +273,7 @@ for (const [w, h, name] of SIZES) {
   views.play = await fit(q); ov.play = await overflow(q); await q.screenshot({ path: `${ROOT}/shots/fit-${name}-play.png` })
   await q.evaluate(() => nc.runBot('good', 3, true)); await q.waitForSelector('#vResult:not([hidden])', { timeout: 5000 }); await q.evaluate(() => nc.finishReveal()); await q.waitForTimeout(500)
   views.result = await fit(q); ov.result = await overflow(q); await q.screenshot({ path: `${ROOT}/shots/fit-${name}-result.png` })
+  await t(`${name}: 結果画面で撮影中のトースト・吹き出しが見えていない`, async () => { const r = await q.evaluate(() => [...document.querySelectorAll('.toast.play,.ono,#count:not([hidden]),#hint:not([hidden])')].filter(e => e.checkVisibility()).map(e => e.className + ':' + e.textContent)); expect(!r.length, r); return 'none' })
   for (const [v, r] of Object.entries(views)) await t(`一画面に収まる ${name} ${w}x${h} ${v}`, async () => { expect(!r.over.length, r) })
   await t(`${name}: はみ出し・エラーなし`, async () => { const bad = Object.entries(ov).filter(([, o]) => o.sw > o.W || o.bad.length); expect(!bad.length && !q.errs.length, JSON.stringify(bad) + q.errs.join('|')) })
   if (name === 'land-se' || name === 'small') await t(`${name}: 結果の写真が小さすぎない（1枚 80px 以上）`, async () => { const s = await q.evaluate(() => document.querySelector('#grid .ph').getBoundingClientRect().width); expect(s >= 80, s); return Math.round(s) })

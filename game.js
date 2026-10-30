@@ -551,7 +551,7 @@ function ev(c, name) {
     case 'hang': Snd.cat('squeak', 1.1 / c.def.size); say('!?'); break
     case 'slip': Snd.sfx('slip'); say(T('bubSlip')); break
     case 'thud': Snd.sfx('thud'); say(T('bubThud')); break
-    case 'shy': setTimeout(() => ono(T('bubShy'), c.head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0.14, 0)), true), 250); break
+    case 'shy': setTimeout(() => (S.view === 'play' || S.view === 'title') && ono(T('bubShy'), c.head.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0.14, 0)), true), 250); break
     case 'rustle': Snd.sfx('rustle'); say(T('bubBox')); break
     case 'pop': Snd.sfx('pop'); break
     case 'pounce': Snd.sfx('swish'); say(T('bubPounce')); break
@@ -692,7 +692,7 @@ function shoot() {
     const st = $('#snapTxt'); st.textContent = T('snap'); st.classList.remove('on'); void st.offsetWidth; st.classList.add('on')
     $('#bShutter').classList.add('cool'); updateHud()
     const th = $('#thumb'), tx = th.querySelector('canvas').getContext('2d'); tx.drawImage(info.img, 0, 0, 96, 96); th.classList.remove('on'); void th.offsetWidth; th.classList.add('on')
-    if (S.films === 1) setTimeout(() => toast(T('last')), 300)
+    if (S.films === 1) setTimeout(() => { if (S.view === 'play' && S.phase === 'play') toast(T('last'), 'play') }, 300)
   }
   if (S.films === 0) S.endT = 0.9
   return info
@@ -914,12 +914,14 @@ async function saveImage() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'cat-photo.png'; a.click()
   setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast(T('saved')); return blob
 }
-function toast(s) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = s; document.body.appendChild(d); setTimeout(() => d.remove(), 1600) }
+function toast(s, kind) { const d = document.createElement('div'); d.className = 'toast' + (kind ? ' ' + kind : ''); d.textContent = s; document.body.appendChild(d); setTimeout(() => d.remove(), 1600) }
 
 // ---------- 画面と言語
 function go(id) {
   for (const v of ['vTitle', 'vHow', 'vPlay', 'vResult']) $('#' + v).hidden = v !== id
   S.view = { vTitle: 'title', vHow: 'how', vPlay: 'play', vResult: 'result' }[id]
+  // 画面が変わったら、撮影中のトーストと吹き出し・擬音を全部消す
+  if (id !== 'vPlay') { $$('.toast.play,.ono').forEach(e => e.remove()); $('#count').hidden = true; $('#hint').hidden = true }
   S.revealed = false
   if (id === 'vTitle' || id === 'vHow') { Snd.setTrack('title'); if (S.phase !== 'title') { resetCats(7); S.phase = 'title' } }
   if (id === 'vResult') layoutAlbum()
