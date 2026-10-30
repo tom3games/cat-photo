@@ -814,7 +814,7 @@ function showResult() {
   $('#editor').classList.remove('on'); $('#edName').textContent = T('editor')
   const ek = R.special || R.tier, list = D.EDITOR[ek][S.lang]
   let line = list[S.seed % list.length]; if (R.miracles && !R.special && R.tier !== 'legend') line = D.EDITOR.miracle[S.lang] + ' ' + line
-  $('#edTxt').textContent = line
+  $('#edTxt').textContent = line; S.edLine = line
   $('#edMouth').setAttribute('d', ['legend', 'great', 'good'].includes(R.tier) && !R.special ? 'M20 39q7 7 14 0' : 'M21 43q6 -4 12 0')
   $('#rBtns').style.visibility = 'hidden'; $('#skipHint').textContent = T('skip'); $('#skipHint').hidden = false
   $('#rDev').classList.remove('off'); $('#tDev').textContent = T('dev'); $('#tDevSub').textContent = T('devSub')
@@ -907,6 +907,11 @@ async function makeCard() {
   x.textAlign = 'center'; x.fillStyle = '#7a6a5c'; x.font = `900 24px ${body}`; x.fillText(T('cardFoot'), 540, 1328)
   return c
 }
+// Xでポスト（クリックの中で同期的に開く。URL は url パラメータで渡す）
+const GAME_URL = 'https://tom3games.github.io/cat-photo/'
+function xText() { const R = S.result; if (!R) return ''; return T('xText').replace('{n}', R.total).replace('{t}', tierInfo(R)[S.lang]).replace('{e}', S.edLine || '') + ' ' + T('xTag') }
+function xIntent() { return 'https://x.com/intent/post?text=' + encodeURIComponent(xText()) + '&url=' + encodeURIComponent(GAME_URL) }
+function postX() { if (!S.result) return; window.open(xIntent(), '_blank', 'noopener') }
 async function saveImage() {
   const c = await makeCard(), blob = await new Promise(r => c.toBlob(r, 'image/png'))
   const file = new File([blob], 'cat-photo.png', { type: 'image/png' })
@@ -934,7 +939,7 @@ function applyLang() {
   $('#h1t').textContent = T('h1t'); $('#h1').textContent = T('h1' + dev); $('#h2t').textContent = T('h2t'); $('#h2').textContent = T('h2' + dev)
   $('#h3t').textContent = T('h3t'); $('#h3').textContent = T('h3'); $('#h4t').textContent = T('h4t'); $('#h4').textContent = T('h4' + dev); $('#hRule').textContent = T('scoreRule')
   $('#tTime').textContent = T('time'); $('#tFilm').textContent = T('film'); $('#tHint').textContent = T('hint')
-  $('#tAgain').textContent = T('again'); $('#tSave').textContent = T('save'); $('#tTitle').textContent = T('toTitle')
+  $('#tAgain').textContent = T('again'); $('#tSave').textContent = T('save'); $('#tPost').textContent = T('post'); $('#tTitle').textContent = T('toTitle')
   $('#catChips').innerHTML = D.CATS.map(c => `<span><i style="background:${c.pat === 'calico' ? `linear-gradient(90deg,${c.light} 33%,${c.base} 33% 66%,${c.dark} 66%)` : c.pat === 'tux' ? `linear-gradient(${c.base} 50%,${c.light} 50%)` : c.base}"></i>${c[S.lang]}</span>`).join('')
   document.title = S.lang === 'ja' ? 'ねこカメラマン｜一番かわいい瞬間を撮れ' : 'CAT PHOTOGRAPHER | Catch the cutest moment'
   if (S.view === 'result' && S.result) { const keep = S.revealed; showResult(); if (keep) finishReveal() }
@@ -1036,6 +1041,7 @@ function boot() {
   on('#bZoom', () => { if (S.view === 'play') setZoom(S.zoom === 2 ? 1 : 2) })
   on('#bAgain', () => { Snd.sfx('tap'); startGame() })
   on('#bSave', () => saveImage())
+  on('#bX', () => { Snd.sfx('tap'); postX() })
   on('#bTitle', () => { Snd.sfx('tap'); go('vTitle') })
   on('#album', () => finishReveal())
   on('#bLang', () => { S.lang = S.lang === 'ja' ? 'en' : 'ja'; store.set('lang', S.lang); applyLang() })
@@ -1049,7 +1055,7 @@ function boot() {
 
 // 検証用の窓口
 window.nc = {
-  S, CATS, L, D, Snd, startGame, shoot, evalShot, endGame, layout, finishReveal, makeCard, saveImage, runBot, setZoom, applyCamera,
+  S, CATS, L, D, Snd, startGame, shoot, evalShot, endGame, layout, finishReveal, makeCard, saveImage, xText, xIntent, postX, GAME_URL, runBot, setZoom, applyCamera,
   fps: () => fps,
   snap: () => capturePhoto({ blur: 0 }).toDataURL('image/jpeg', 0.85),
   screenOf(i) { applyCamera(); const v = CATS[i].head.getWorldPosition(new THREE.Vector3()).project(camera); return [(v.x * 0.5 + 0.5) * L.W, (-v.y * 0.5 + 0.5) * L.H] },

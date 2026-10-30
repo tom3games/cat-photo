@@ -174,9 +174,15 @@ html[lang=en] .logo .l2{font-size:clamp(30px,9vw,54px)}
 .editor .bubble{position:relative;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:6px 11px;font-weight:900;font-size:14px;line-height:1.45;box-shadow:0 3px 0 rgba(0,0,0,.18);flex:1}
 .editor .bubble small{display:block;font-size:10px;color:var(--orange-dk);letter-spacing:.06em}
 .editor .bubble::before{content:"";position:absolute;left:-11px;top:50%;margin-top:-7px;border:7px solid transparent;border-right:9px solid var(--ink);border-left:0}
-#rBtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-#rBtns .btn{min-height:48px;font-size:16px;padding:0 10px;min-width:0}
-#rBtns #bAgain{grid-column:1/3}
+#rBtns{display:flex;flex-direction:column;gap:10px}
+.rRow{display:flex;gap:10px}
+.rRow>.btn{flex:1 1 0;width:auto}
+#rBtns .btn{min-height:48px;font-size:16px;padding:0 10px;min-width:0;gap:8px}
+#rBtns #bTitle{flex:0 0 auto;padding:0 14px}
+.btn.xpost{background:linear-gradient(#2b2b2b,#000);color:#fff;box-shadow:0 6px 0 #555,0 12px 22px rgba(0,0,0,.25)}
+.btn.xpost::before{opacity:.35}
+.btn.xpost:active{box-shadow:0 1px 0 #555}
+.btn.xpost svg.xlogo{fill:currentColor;stroke:none;width:19px;height:19px}
 #rBtns .btn.main{font-size:18px}
 #skipHint{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:900;color:var(--sub);white-space:nowrap}
 #rDev{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(40,12,8,.92);color:#ffb3a0;z-index:3;transition:opacity .5s}
@@ -192,8 +198,11 @@ html[lang=en] .logo .l2{font-size:clamp(30px,9vw,54px)}
   .rhead{grid-column:1/3}
   #album{grid-column:1;grid-row:2}
   #rSide{grid-column:2;grid-row:2}
-  #rBtns{grid-template-columns:1fr}
-  #rBtns #bAgain{grid-column:auto}
+  #rBtns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"again again" "save x" "title title";gap:8px}
+  .rRow{display:contents}
+  #bAgain{grid-area:again}#bSave{grid-area:save}#bX{grid-area:x}#bTitle{grid-area:title}
+  #rBtns .r2 .btn{padding:0 6px;gap:6px}
+  #rBtns #bSave svg{display:none}
 }
 @media (max-height:700px){
   .logo .mark{width:66px;height:52px}
@@ -292,10 +301,15 @@ html[lang=en] .logo .l2{font-size:clamp(30px,9vw,54px)}
   </div>
   <div id="rSide">
     <div class="editor" id="editor"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="26" fill="#ffe2c4" stroke="#2b2320" stroke-width="2.5"/><path d="M6 22c2-14 14-19 23-18 11 1 19 8 19 18-6-5-14-7-21-6-7 0-14 2-21 6z" fill="#3b2b26"/><circle cx="19" cy="29" r="6" fill="#fff" stroke="#2b2320" stroke-width="2.4"/><circle cx="35" cy="29" r="6" fill="#fff" stroke="#2b2320" stroke-width="2.4"/><path d="M25 29h4" stroke="#2b2320" stroke-width="2.4"/><circle id="eyeL" cx="19" cy="29.5" r="2" fill="#2b2320"/><circle id="eyeR" cx="35" cy="29.5" r="2" fill="#2b2320"/><path id="edMouth" d="M21 41q6 4 12 0" fill="none" stroke="#2b2320" stroke-width="2.6" stroke-linecap="round"/><path d="M40 6l4-4 3 6" fill="#d6334a"/></svg><div class="bubble"><small id="edName"></small><span id="edTxt"></span></div></div>
-    <div class="row" id="rBtns">
-      <button class="btn main" id="bAgain"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg><span id="tAgain"></span></button>
-      <button class="btn teal" id="bSave"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span id="tSave"></span></button>
-      <button class="btn" id="bTitle"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v10h12V10"/></svg><span id="tTitle"></span></button>
+    <div id="rBtns">
+      <div class="rRow r1">
+        <button class="btn main" id="bAgain"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg><span id="tAgain"></span></button>
+        <button class="btn" id="bTitle"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 10v10h12V10"/></svg><span id="tTitle"></span></button>
+      </div>
+      <div class="rRow r2">
+        <button class="btn teal" id="bSave"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span id="tSave"></span></button>
+        <button class="btn xpost" id="bX"><svg class="xlogo" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span id="tPost"></span></button>
+      </div>
     </div>
   </div>
 </main>
@@ -324,8 +338,8 @@ html[lang=en] .logo .l2{font-size:clamp(30px,9vw,54px)}
   },5000);
 })();
 </script>
-<script src="data.js?v=1"></script>
-<script src="snd.js?v=1"></script>
-<script type="module" src="game.js?v=1"></script>
+<script src="data.js?v=2"></script>
+<script src="snd.js?v=2"></script>
+<script type="module" src="game.js?v=2"></script>
 </body>
 </html>
