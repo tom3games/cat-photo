@@ -1,5 +1,6 @@
 // SNS用サムネ og.png（1200x630）。node og.mjs
 // 左: 撮影中の画面（三毛の変顔をファインダーに入れてシャッターを切った瞬間）、右: タイトルと一言
+import './mute-auto.mjs'  // テスト中は絶対に音を出さない（playwright を無音に差し替え）
 import { chromium } from 'playwright'
 import { spawn } from 'node:child_process'
 const ROOT = import.meta.dirname
