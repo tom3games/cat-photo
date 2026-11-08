@@ -99,7 +99,7 @@ await t('ブラウザの拡大が起きない（viewport・ピンチ・Ctrl+ホ�
 })
 await t('OGP 一式がある（画像は ?v= 付き・URL は公開先）', async () => {
   const r = await p.evaluate(() => ({ img: document.querySelector('meta[property="og:image"]').content, url: document.querySelector('meta[property="og:url"]').content, all: ['og:title', 'og:description', 'og:image', 'og:url', 'og:type'].every(k => !!document.querySelector(`meta[property="${k}"]`)) && !!document.querySelector('meta[name="twitter:card"]') }))
-  expect(r.all && r.img === 'https://tom3games.github.io/cat-photo/og.png?v=1' && r.url === 'https://tom3games.github.io/cat-photo/', r); return r.img
+  expect(r.all && r.img === 'https://tom3games.com/play/cat-photo/og.png?v=1' && r.url === 'https://tom3games.com/play/cat-photo/', r); return r.img
 })
 await t('og.png が 1200x630 で置いてある', async () => { const r = await p.evaluate(async () => { const i = new Image(); i.src = '/og.png'; await i.decode(); return [i.naturalWidth, i.naturalHeight] }); expect(r[0] === 1200 && r[1] === 630, r); return r })
 await t('英語に切り替わり、もう一度で日本語に戻る', async () => {
